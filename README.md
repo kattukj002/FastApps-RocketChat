@@ -62,12 +62,15 @@ This file uses a CloudFormation Template (`RocketChatServerConfig.json`) to crea
 #### c) Important Parameters
 Detailed descriptions of the parameters for this function can be found in the `createRocketChatServer.js` file. There are many important parameters in this file that **MUST** be set correctly for this function to work, so take the time to read through the descriptions of the parameters and set them accordingly.
 #### d) Permissions
+There are two important parameters in the `createRocketChatServer.js` file: `accessKeyId` and `secretAccessKey`. These are AWS credentials that are used to create the CloudFormation stack, which consists of an EC2 instance, a Route 53 DNS record, and an S3 bucket. Hence, the user whose credentials are being used **MUST** have permission to create and modify the aforementioned AWS resources.
 ### 3. `RocketChatServerConfig.json`
 #### a) Description
-This JSON file is a CloudFormation template that specifies the architecture configuration to be created when stack creation is initiated. This template also contains the commands that are run on the EC2 instance at instance launch.
+This JSON file is a CloudFormation template that specifies the architecture configuration to be created when stack creation is initiated. This template also contains the bash script that is run on the new EC2 instance at launch.
 
 **Important -** the parameters specified in the CloudFormation template must match the parameters specified in the `Parameters` array of the `params` variable in the `createRocketChatServer.js` file. In other words, if a parameter is added to the `createRocketChatServer.js` file and the parameter needs to be passed into the CloudFormation template, the parameter must also be added to the CloudFormation template.
 ### 4. `HubotScript.js`
 #### a) Description
 This file is a script for [Hubot](https://hubot.github.com/), which is used to redirect the conversation flow of the chatbot. Essentially, Hubot receives all messages that the user enters, and it classifies the user input as a question or an action. Input is classified as a question if it begins with "who", "what", "where", "when", "why" or "how". All other inputs are classified as actions. If the input is flagged as a question, it is sent to a Java service that uses AWS Comprehend to reply to the question. If the question is flagged as an action, it is sent to AWS Lex, which interprets the input and tries to match it to an intent. Currently, the only developed intent is the "AddExpense" intent, but it's easy to imitate the setup for this intent and modify it to create new intents.
+#### b) Requirements
+* [`aws-sdk`](https://www.npmjs.com/package/aws-sdk) - node module for interacting with AWS API. No need to install this module, since this is taken care of in the bash script.
 
